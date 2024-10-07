@@ -23,14 +23,28 @@ if [ -z "$CLOUD_SHELL" ]; then
   printf "Completed.\n\n"
 
   printf "Setting up NVM...\n"
-  export NVM_DIR="/usr/local/nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  export NVM_DIR="$HOME/.nvm"
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    . "$NVM_DIR/nvm.sh"  # This loads nvm
+  else
+    echo "NVM not found. Please install NVM first."
+    exit 1
+  fi
+  if [ -s "$NVM_DIR/bash_completion" ]; then
+    . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  fi
   printf "Completed.\n\n"
   
   printf "Updating nodeJS version...\n"
-  nvm install --lts
+  if ! nvm install --lts; then
+    echo "Failed to install Node.js LTS version."
+    exit 1
+  fi
   printf "Completed.\n\n"
+  # Show the current version of Node.js
+  printf "####################################################################################################"
+  printf "#################### Current Node.js version: $(node -v)\n ######################################"
+  printf "################################# => NVM version: $(nvm current)\n\n ####################"
 fi
 
 printf "Installing monolith dependencies...\n"
@@ -63,5 +77,6 @@ if [ -z "$CLOUD_SHELL" ]; then
   printf "#                                                                             #\n"
   printf "# nvm install --lts                                                           #\n"
   printf "#                                                                             #\n"
+  printf "#################### Current Node.js version: $(node -v)\n ####################\n"
   printf "###############################################################################\n"
 fi
